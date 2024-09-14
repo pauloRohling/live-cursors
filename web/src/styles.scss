@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url("https://rsms.me/inter/inter.css");
+
+@layer components {
+  .bg-tiled {
+    background-image: radial-gradient(rgb(212 212 212) 1px, transparent 0);
+    background-size: 32px 32px;
+    background-position: -15px -15px;
+  }
+}
+
+body {
+  @apply font-inter bg-tiled flex min-h-dvh w-full bg-neutral-100;
+
+  cursor:
+    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="%23000000" d="M-0 0.47l0 16.33c0,0.42 0.5,0.62 0.79,0.32l4.51 -4.51c0.09,-0.09 0.2,-0.14 0.32,-0.14l6.38 0c0.25,-0 0.46,-0.21 0.46,-0.46 0,-0.12 -0.05,-0.24 -0.13,-0.33l-11.54 -11.55c-0.09,-0.09 -0.2,-0.13 -0.32,-0.13 -0.25,0 -0.46,0.2 -0.46,0.46l-0 0.01z"></path></svg>')
+      0 0,
+    auto;
+}
+
+@supports (font-variation-settings: normal) {
+  body {
+    @apply font-inter-var;
+  }
+}
+
+app-root {
+  @apply flex w-full;
+}
