@@ -2,68 +2,32 @@ package main
 
 import (
 	"fmt"
-	"github.com/gorilla/websocket"
-	"log"
-	"math/rand"
-	"net/http"
+	"github.com/ilyakaznacheev/cleanenv"
+	"live-cursors/internal"
 )
 
-type Point struct {
-	X int `json:"x"`
-	Y int `json:"y"`
+type Environment struct {
+	Api struct {
+		Url string `yml:"url" env:"API_URL"`
+		Key string `yml:"key" env:"API_KEY"`
+	} `yml:"api"`
 }
 
-type Message struct {
-	UserUuid string `json:"userUuid"`
-	Point    Point  `json:"point"`
-}
-
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-}
-
-var clients = make(map[int]*websocket.Conn)
-
-func wsEndpoint(w http.ResponseWriter, r *http.Request) {
-	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
-
-	ws, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Println(err)
-	}
-
-	clientId := rand.Int()
-	clients[clientId] = ws
-	log.Println("Client Connected as ", clientId)
-
-	defer delete(clients, clientId)
-	reader(ws)
-}
-
-func reader(conn *websocket.Conn) {
-	for {
-		messageType, payload, err := conn.ReadMessage()
-		if err != nil {
-			log.Println(err)
-			return
-		}
-
-		for _, otherConn := range clients {
-			if otherConn == conn {
-				continue
-			}
-
-			if err = otherConn.WriteMessage(messageType, payload); err != nil {
-				log.Println(err)
-				return
-			}
-		}
-	}
-}
+var env Environment
 
 func main() {
-	fmt.Println("Starting server...")
-	http.HandleFunc("/", wsEndpoint)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	err := cleanenv.ReadConfig("env.yml", &env)
+	if err != nil {
+		panic(err)
+	}
+
+	nameGenerator := internal.NewNameGenerator(env.Api.Url, env.Api.Key)
+	colorGenerator := internal.NewColorGenerator()
+
+	fmt.Println(env.Api.Url)
+	fmt.Println(env.Api.Key)
+	fmt.Println(nameGenerator, colorGenerator)
+
+	//http.HandleFunc("/", wsEndpoint)
+	//log.Fatal(http.ListenAndServe(":8080", nil))
 }
