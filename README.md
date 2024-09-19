@@ -11,6 +11,7 @@ Before you begin, ensure you have the following installed:
 - [Go](https://go.dev/doc/install)
 - [Docker](https://docs.docker.com/get-docker/)
 - [Node.js](https://nodejs.org/en/download/)
+- [Air](https://github.com/air-verse/air)
 - [API Ninjas Account](https://api-ninjas.com/)
 
 ### Installation

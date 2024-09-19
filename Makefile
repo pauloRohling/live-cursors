@@ -25,4 +25,4 @@ test/cover:
 ## run: run the application
 .PHONY: run
 run:
-	go run ./cmd/main.go
+	air -c .air.toml
