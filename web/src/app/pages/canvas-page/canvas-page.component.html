@@ -1,1 +1,11 @@
-<p>canvas-page works!</p>
+<section class="flex size-full items-center justify-center gap-4">
+  <span>{{ cursors | async | json }}</span>
+</section>
+
+@for (cursor of cursors | async; track cursor.userUuid) {
+  <app-cursor
+    [style.transform]="'translate(' + cursor.point.x + 'px, ' + cursor.point.y + 'px)'"
+    class="absolute transition-transform duration-300 ease-out will-change-transform"
+    [name]="cursor.userUuid"
+    [color]="'#ff00ff'"></app-cursor>
+}
