@@ -50,6 +50,21 @@ func (manager *InMemoryManager) Get(id uuid.UUID) Client {
 	return manager.clients[id]
 }
 
+func (manager *InMemoryManager) GetAll() []Client {
+	manager.mutex.Lock()
+	defer manager.mutex.Unlock()
+
+	clients := make([]Client, len(manager.clients))
+
+	i := 0
+	for _, client := range manager.clients {
+		clients[i] = client
+		i++
+	}
+
+	return clients
+}
+
 func (manager *InMemoryManager) Broadcast(message []byte, ignoreId *uuid.UUID) {
 	manager.mutex.Lock()
 	defer manager.mutex.Unlock()

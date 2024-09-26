@@ -1,39 +1,39 @@
-package client
+package model
 
 import (
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 )
 
-type WebSocketClient struct {
+type Client struct {
 	ID    uuid.UUID `json:"id"`
 	Name  string    `json:"name"`
 	Color string    `json:"color"`
 	conn  *websocket.Conn
 }
 
-func NewWebSocketClient(name string, color string, socket *websocket.Conn) *WebSocketClient {
-	return &WebSocketClient{
+func NewClient(name string, color string, conn *websocket.Conn) *Client {
+	return &Client{
 		ID:    uuid.New(),
 		Name:  name,
 		Color: color,
-		conn:  socket,
+		conn:  conn,
 	}
 }
 
-func (client *WebSocketClient) GetID() uuid.UUID {
+func (client *Client) GetID() uuid.UUID {
 	return client.ID
 }
 
-func (client *WebSocketClient) Send(message []byte) error {
+func (client *Client) Send(message []byte) error {
 	return client.conn.WriteMessage(websocket.TextMessage, message)
 }
 
-func (client *WebSocketClient) Read() ([]byte, error) {
+func (client *Client) Read() ([]byte, error) {
 	_, message, err := client.conn.ReadMessage()
 	return message, err
 }
 
-func (client *WebSocketClient) Close() error {
+func (client *Client) Close() error {
 	return client.conn.Close()
 }

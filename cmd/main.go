@@ -27,8 +27,9 @@ func main() {
 	nameGenerator := generator.NewNameGenerator(env.Api.Url, env.Api.Key)
 	colorGenerator := generator.NewColorGenerator()
 	clientManager := client.NewInMemoryManager()
+	clientFactory := client.NewRandomFactory(nameGenerator, colorGenerator)
 
-	wsHandler := presentation.NewWebSocketHandler(nameGenerator, colorGenerator, clientManager)
+	wsHandler := presentation.NewWebSocketHandler(clientFactory, clientManager)
 
 	http.HandleFunc("/", wsHandler.Handle)
 	log.Fatal(http.ListenAndServe(":8080", nil))

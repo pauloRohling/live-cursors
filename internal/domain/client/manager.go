@@ -6,5 +6,6 @@ type Manager interface {
 	Add(client Client) error
 	Remove(id uuid.UUID) error
 	Get(id uuid.UUID) Client
+	GetAll() []Client
 	Broadcast(message []byte, ignoreId *uuid.UUID)
 }
