@@ -1,4 +1,4 @@
-package domain
+package generator
 
 import (
 	"github.com/stretchr/testify/assert"

@@ -1,4 +1,4 @@
-package domain
+package generator
 
 import "live-cursors/internal/model"
 
