@@ -2,13 +2,6 @@ package model
 
 import "time"
 
-type MessageType string
-
-const (
-	MessageTypePosition MessageType = "position"
-	MessageTypeUser     MessageType = "user"
-)
-
 type Message[T any] struct {
 	Data      T           `json:"data"`
 	Type      MessageType `json:"type"`
