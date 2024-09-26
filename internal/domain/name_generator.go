@@ -1,4 +1,4 @@
-package internal
+package domain
 
 import "math/rand"
 
@@ -14,8 +14,8 @@ func NewNameGenerator(url string, key string) *NameGenerator {
 	}
 }
 
-func (n *NameGenerator) Generate() string {
+func (n *NameGenerator) Generate() (string, error) {
 	names := []string{"Paulo", "João", "Pedro", "Maria", "José", "Carlos", "Ana", "Maria", "Luís"}
 	index := rand.Intn(len(names))
-	return names[index]
+	return names[index], nil
 }
