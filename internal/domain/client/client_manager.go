@@ -7,26 +7,26 @@ import (
 )
 
 type InMemoryManager struct {
-	clients map[uuid.UUID]*Client
+	clients map[uuid.UUID]Client
 	mutex   *sync.Mutex
 }
 
 func NewInMemoryManager() *InMemoryManager {
 	return &InMemoryManager{
-		clients: make(map[uuid.UUID]*Client),
+		clients: make(map[uuid.UUID]Client),
 		mutex:   &sync.Mutex{},
 	}
 }
 
-func (manager *InMemoryManager) Add(client *Client) error {
+func (manager *InMemoryManager) Add(client Client) error {
 	manager.mutex.Lock()
 	defer manager.mutex.Unlock()
 
-	if _, ok := manager.clients[client.ID]; ok {
+	if _, ok := manager.clients[client.GetID()]; ok {
 		return errors.New("client already exists")
 	}
 
-	manager.clients[client.ID] = client
+	manager.clients[client.GetID()] = client
 	return nil
 }
 
@@ -35,7 +35,7 @@ func (manager *InMemoryManager) Remove(id uuid.UUID) error {
 	defer manager.mutex.Unlock()
 
 	if client, ok := manager.clients[id]; ok {
-		if err := client.socket.Close(); err != nil {
+		if err := client.Close(); err != nil {
 			return err
 		}
 		delete(manager.clients, id)
@@ -44,7 +44,7 @@ func (manager *InMemoryManager) Remove(id uuid.UUID) error {
 	return nil
 }
 
-func (manager *InMemoryManager) Get(id uuid.UUID) *Client {
+func (manager *InMemoryManager) Get(id uuid.UUID) Client {
 	manager.mutex.Lock()
 	defer manager.mutex.Unlock()
 	return manager.clients[id]
