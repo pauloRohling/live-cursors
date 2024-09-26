@@ -1,9 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"github.com/ilyakaznacheev/cleanenv"
-	"live-cursors/internal/domain"
+	"live-cursors/internal/domain/client"
+	"live-cursors/internal/domain/generator"
+	"live-cursors/internal/presentation"
+	"log"
+	"net/http"
 )
 
 type Environment struct {
@@ -21,19 +24,12 @@ func main() {
 		panic(err)
 	}
 
-	nameGenerator := domain.NewNameGenerator(env.Api.Url, env.Api.Key)
-	colorGenerator := domain.NewColorGenerator()
-	userGenerator := domain.NewUserGenerator(nameGenerator, colorGenerator)
+	nameGenerator := generator.NewNameGenerator(env.Api.Url, env.Api.Key)
+	colorGenerator := generator.NewColorGenerator()
+	clientManager := client.NewInMemoryManager()
 
-	user, err := userGenerator.Generate()
-	if err != nil {
-		panic(err)
-	}
+	wsHandler := presentation.NewWebSocketHandler(nameGenerator, colorGenerator, clientManager)
 
-	fmt.Println(env.Api.Url)
-	fmt.Println(env.Api.Key)
-	fmt.Println(user)
-
-	//http.HandleFunc("/", wsEndpoint)
-	//log.Fatal(http.ListenAndServe(":8080", nil))
+	http.HandleFunc("/", wsHandler.Handle)
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }

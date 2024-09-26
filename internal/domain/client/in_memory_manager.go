@@ -50,12 +50,12 @@ func (manager *InMemoryManager) Get(id uuid.UUID) Client {
 	return manager.clients[id]
 }
 
-func (manager *InMemoryManager) Broadcast(message []byte, ignoreId uuid.UUID) {
+func (manager *InMemoryManager) Broadcast(message []byte, ignoreId *uuid.UUID) {
 	manager.mutex.Lock()
 	defer manager.mutex.Unlock()
 
 	for id, client := range manager.clients {
-		if id == ignoreId {
+		if ignoreId != nil && *ignoreId == id {
 			continue
 		}
 

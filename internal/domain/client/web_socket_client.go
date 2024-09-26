@@ -6,9 +6,9 @@ import (
 )
 
 type WebSocketClient struct {
-	ID    uuid.UUID
-	Name  string
-	Color string
+	ID    uuid.UUID `json:"id"`
+	Name  string    `json:"name"`
+	Color string    `json:"color"`
 	conn  *websocket.Conn
 }
 
