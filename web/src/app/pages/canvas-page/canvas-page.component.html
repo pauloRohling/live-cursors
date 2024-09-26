@@ -1,11 +1,11 @@
 <section class="flex size-full items-center justify-center gap-4">
-  <span>{{ cursors | async | json }}</span>
+  <span>{{ cursors$ | async | json }}</span>
 </section>
 
-@for (cursor of cursors | async; track cursor.userUuid) {
+@for (cursor of cursors$ | async; track cursor.id) {
   <app-cursor
-    [style.transform]="'translate(' + cursor.point.x + 'px, ' + cursor.point.y + 'px)'"
+    [style.transform]="'translate(' + cursor.x + 'px, ' + cursor.y + 'px)'"
     class="absolute transition-transform duration-300 ease-out will-change-transform"
-    [name]="cursor.userUuid"
+    [name]="cursor.id"
     [color]="'#ff00ff'"></app-cursor>
 }

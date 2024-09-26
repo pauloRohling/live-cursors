@@ -1,12 +1,12 @@
 import { Injectable } from "@angular/core";
 import { environment } from "../../environments/environment";
 import { webSocket } from "rxjs/webSocket";
+import { MessageType } from "../model/message-type";
+import { Message } from "../model/message";
 
 @Injectable({ providedIn: "root" })
 export class WebSocketService {
-  private readonly socket = webSocket({
-    url: environment.ws,
-  });
+  private readonly socket = webSocket<Message>({ url: environment.ws });
 
   readonly messages$ = this.socket.asObservable();
 
@@ -15,13 +15,11 @@ export class WebSocketService {
       return;
     }
 
-    let payload: string;
-    try {
-      payload = JSON.stringify(content);
-    } catch (e) {
-      console.error(e);
-      return;
-    }
+    const payload = {
+      data: content,
+      type: MessageType.POSITION,
+      timestamp: new Date().getUTCMilliseconds(),
+    };
 
     this.socket.next(payload);
   }

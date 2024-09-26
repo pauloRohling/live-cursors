@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit } from "@angular/core";
 import { AsyncPipe, JsonPipe } from "@angular/common";
 import { CursorComponent } from "../../components/cursor/cursor.component";
+import { fromEvent, map, tap, throttleTime, withLatestFrom } from "rxjs";
+import { CursorService } from "../../services/cursor.service";
 import { WebSocketService } from "../../services/websocket.service";
-import { fromEvent, map, Observable, scan, tap, throttleTime } from "rxjs";
-import { Point } from "../../model/point";
 
 @Component({
   selector: "app-canvas-page",
@@ -14,20 +14,10 @@ import { Point } from "../../model/point";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CanvasPageComponent implements OnInit {
+  private readonly cursorService = inject(CursorService);
   private readonly websocketService = inject(WebSocketService);
-  private readonly userUuid = crypto.randomUUID();
 
-  protected readonly cursors: Observable<any> = this.websocketService.messages$.pipe(
-    scan((cursors, payload: any) => {
-      const cursor = JSON.parse(payload);
-      const userUuid = cursor["userUuid"];
-      if (userUuid === this.userUuid) {
-        return cursors;
-      }
-      return { ...cursors, [userUuid]: cursor };
-    }, {}),
-    map((cursors) => Object.values(cursors)),
-  );
+  protected readonly cursors$ = this.cursorService.cursors$;
 
   ngOnInit(): void {
     fromEvent(window, "mousemove")
@@ -37,10 +27,9 @@ export class CanvasPageComponent implements OnInit {
           const mouseEvent = event as MouseEvent;
           return { x: mouseEvent.x, y: mouseEvent.y };
         }),
-        tap((point: Point) => this.websocketService.send({ userUuid: this.userUuid, point })),
+        withLatestFrom(this.cursorService.active$),
+        tap(([point, user]) => this.websocketService.send({ id: user.id, ...point })),
       )
       .subscribe();
-
-    this.websocketService.messages$.subscribe(console.log);
   }
 }
