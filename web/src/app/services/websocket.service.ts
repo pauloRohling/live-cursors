@@ -3,12 +3,13 @@ import { environment } from "../../environments/environment";
 import { webSocket } from "rxjs/webSocket";
 import { MessageType } from "../model/message-type";
 import { Message } from "../model/message";
+import { share } from "rxjs";
 
 @Injectable({ providedIn: "root" })
 export class WebSocketService {
   private readonly socket = webSocket<Message>({ url: environment.ws });
 
-  readonly messages$ = this.socket.asObservable();
+  readonly messages$ = this.socket.asObservable().pipe(share());
 
   send(content: any): void {
     if (!(content instanceof Object)) {

@@ -18,26 +18,28 @@ export class CursorService {
   private readonly state$ = this.websocketService.messages$.pipe(
     scan(
       (accumulator, current) => {
-        if (current.type === MessageType.SELF) {
-          return { ...accumulator, active: current.data as Client };
+        if (current.type === MessageType.POSITION) {
+          const position = current.data as Position;
+          const cursor = accumulator.cursors.get(position.id);
+          if (cursor) {
+            accumulator.cursors.set(cursor.id, { ...cursor, x: position.x, y: position.y });
+          }
+          return accumulator;
         }
 
-        if (current.type === MessageType.CLIENT) {
-          const cursor = { ...(current.data as Client), x: 0, y: 0 };
-          accumulator.cursors.set(current.data.id, cursor);
-          return accumulator;
+        const client = current.data as Client;
+
+        if (current.type === MessageType.SELF) {
+          return { ...accumulator, active: client };
         }
 
         if (current.type === MessageType.REMOVE) {
-          accumulator.cursors.delete(current.data.id);
+          accumulator.cursors.delete(client.id);
           return accumulator;
         }
 
-        const cursor = accumulator.cursors.get(current.data.id);
-        if (cursor) {
-          const position = current.data as Position;
-          accumulator.cursors.set(cursor.id, { ...cursor, x: position.x, y: position.y });
-        }
+        const cursor = { ...client, x: -50, y: -50 };
+        accumulator.cursors.set(client.id, cursor);
         return accumulator;
       },
       <CursorState>{ active: undefined, cursors: new Map() },
