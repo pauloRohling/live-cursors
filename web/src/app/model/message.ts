@@ -1,9 +1,9 @@
 import { Position } from "./position";
-import { User } from "./user";
+import { Client } from "./client";
 import { MessageType } from "./message-type";
 
 export interface Message {
   type: MessageType;
-  data: Position | User;
+  data: Position | Client;
   timestamp: number;
 }

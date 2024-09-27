@@ -2,12 +2,12 @@ import { inject, Injectable } from "@angular/core";
 import { WebSocketService } from "./websocket.service";
 import { filter, map, scan, share } from "rxjs";
 import { MessageType } from "../model/message-type";
-import { User } from "../model/user";
+import { Client } from "../model/client";
 import { Cursor } from "../model/cursor";
 import { Position } from "../model/position";
 
 type CursorState = {
-  active: User | undefined;
+  active: Client | undefined;
   cursors: Map<string, Cursor>;
 };
 
@@ -19,11 +19,11 @@ export class CursorService {
     scan(
       (accumulator, current) => {
         if (current.type === MessageType.SELF) {
-          return { ...accumulator, active: current.data as User };
+          return { ...accumulator, active: current.data as Client };
         }
 
         if (current.type === MessageType.CLIENT) {
-          const cursor = { ...(current.data as User), x: 0, y: 0 };
+          const cursor = { ...(current.data as Client), x: 0, y: 0 };
           accumulator.cursors.set(current.data.id, cursor);
           return accumulator;
         }

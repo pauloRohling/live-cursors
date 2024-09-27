@@ -1,4 +1,4 @@
-import { User } from "./user";
+import { Client } from "./client";
 import { Position } from "./position";
 
-export type Cursor = User & Position;
+export type Cursor = Client & Position;
