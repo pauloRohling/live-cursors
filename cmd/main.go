@@ -4,6 +4,7 @@ import (
 	"github.com/ilyakaznacheev/cleanenv"
 	"live-cursors/internal/domain/client"
 	"live-cursors/internal/domain/generator"
+	"live-cursors/internal/domain/message"
 	"live-cursors/internal/presentation"
 	"log"
 	"net/http"
@@ -28,8 +29,9 @@ func main() {
 	colorGenerator := generator.NewColorGenerator()
 	clientManager := client.NewInMemoryManager()
 	clientFactory := client.NewRandomFactory(nameGenerator, colorGenerator)
+	producer := message.NewProducer(clientManager)
 
-	wsHandler := presentation.NewWebSocketHandler(clientFactory, clientManager)
+	wsHandler := presentation.NewWebSocketHandler(clientFactory, clientManager, producer)
 
 	http.HandleFunc("/", wsHandler.Handle)
 	log.Fatal(http.ListenAndServe(":8080", nil))
