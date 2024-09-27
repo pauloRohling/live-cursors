@@ -73,10 +73,6 @@ npm start
 | `HTTP_MAX_RETRY_TIMEOUT` | Maximum timeout for HTTP requests           | 5s                                       | false    |
 | `HTTP_MIN_RETRY_TIMEOUT` | Minimum timeout for HTTP requests           | 1s                                       | false    |
 
-## Contributing
-
-Contributions are welcome!
-
 ## License
 
 Live Cursors is released under the MIT License. See the [LICENSE](LICENSE) file for more information.
