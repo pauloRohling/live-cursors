@@ -4,6 +4,6 @@ type MessageType string
 
 const (
 	MessageTypePosition MessageType = "position"
-	MessageTypeUser     MessageType = "user"
+	MessageTypeClient   MessageType = "client"
 	MessageTypeSelf     MessageType = "self"
 )

@@ -15,7 +15,7 @@ func NewProducer(manager client.Manager) *Producer {
 	return &Producer{manager: manager}
 }
 
-func (producer *Producer) ProducePosition(client client.Client, positionMessage []byte) error {
+func (producer *Producer) Position(client client.Client, positionMessage []byte) error {
 	for otherClient := range producer.getAllExcept(client) {
 		if err := otherClient.Send(positionMessage); err != nil {
 			return err
@@ -25,7 +25,7 @@ func (producer *Producer) ProducePosition(client client.Client, positionMessage 
 	return nil
 }
 
-func (producer *Producer) ProduceSelf(client client.Client) error {
+func (producer *Producer) Self(client client.Client) error {
 	message := model.NewMessage(client, model.MessageTypeSelf)
 	payload, err := json.Serialize(message)
 	if err != nil {
@@ -34,8 +34,8 @@ func (producer *Producer) ProduceSelf(client client.Client) error {
 	return client.Send(payload)
 }
 
-func (producer *Producer) ProduceUser(client client.Client) error {
-	message := model.NewMessage(client, model.MessageTypeUser)
+func (producer *Producer) Client(client client.Client) error {
+	message := model.NewMessage(client, model.MessageTypeClient)
 	payload, err := json.Serialize(message)
 	if err != nil {
 		return err
@@ -50,9 +50,9 @@ func (producer *Producer) ProduceUser(client client.Client) error {
 	return nil
 }
 
-func (producer *Producer) ProduceCurrentUsers(client client.Client) error {
+func (producer *Producer) CurrentClients(client client.Client) error {
 	for otherClient := range producer.getAllExcept(client) {
-		message := model.NewMessage(otherClient, model.MessageTypeUser)
+		message := model.NewMessage(otherClient, model.MessageTypeClient)
 		payload, err := json.Serialize(message)
 		if err != nil {
 			return err

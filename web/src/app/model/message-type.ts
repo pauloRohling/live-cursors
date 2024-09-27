@@ -1,5 +1,5 @@
 export enum MessageType {
   POSITION = "position",
   SELF = "self",
-  USER = "user",
+  CLIENT = "client",
 }

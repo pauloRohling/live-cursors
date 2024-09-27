@@ -62,15 +62,15 @@ func (handler *WebSocketHandler) Handle(w http.ResponseWriter, r *http.Request) 
 }
 
 func (handler *WebSocketHandler) sendMessages(newClient client.Client) error {
-	if err := handler.producer.ProduceSelf(newClient); err != nil {
+	if err := handler.producer.Self(newClient); err != nil {
 		return err
 	}
 
-	if err := handler.producer.ProduceUser(newClient); err != nil {
+	if err := handler.producer.Client(newClient); err != nil {
 		return err
 	}
 
-	return handler.producer.ProduceCurrentUsers(newClient)
+	return handler.producer.CurrentClients(newClient)
 }
 
 func (handler *WebSocketHandler) listenPositions(newClient client.Client) {
@@ -81,7 +81,7 @@ func (handler *WebSocketHandler) listenPositions(newClient client.Client) {
 			return
 		}
 
-		if err = handler.producer.ProducePosition(newClient, rawPosition); err != nil {
+		if err = handler.producer.Position(newClient, rawPosition); err != nil {
 			log.Println(err)
 			return
 		}

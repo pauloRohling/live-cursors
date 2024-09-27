@@ -22,7 +22,7 @@ export class CursorService {
           return { ...accumulator, active: current.data as User };
         }
 
-        if (current.type === MessageType.USER) {
+        if (current.type === MessageType.CLIENT) {
           const cursor = { ...(current.data as User), x: 0, y: 0 };
           accumulator.cursors.set(current.data.id, cursor);
           return accumulator;
