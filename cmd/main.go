@@ -1,12 +1,16 @@
 package main
 
 import (
+	"context"
+	"errors"
+	"fmt"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/ilyakaznacheev/cleanenv"
 	"live-cursors/internal/domain/client"
 	"live-cursors/internal/domain/generator"
 	"live-cursors/internal/domain/message"
 	"live-cursors/internal/presentation"
+	"live-cursors/pkg/graceful"
 	"log"
 	"net/http"
 	"time"
@@ -42,7 +46,25 @@ func main() {
 	wsHandler := presentation.NewWebSocketHandler(clientFactory, clientManager, producer)
 
 	http.HandleFunc("/", wsHandler.Handle)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	server := &http.Server{Addr: fmt.Sprintf(":%d", 8080)}
+
+	gracefulShutdownCtx := graceful.Shutdown(&graceful.Params{
+		OnStart:   func() { log.Printf("Graceful shutdown started. Waiting for active requests to complete") },
+		OnTimeout: func() { log.Fatal("Graceful shutdown timed out. Forcing exit.") },
+		OnShutdown: func(timeoutCtx context.Context) {
+			if shutdownErr := server.Shutdown(timeoutCtx); shutdownErr != nil {
+				log.Fatal(shutdownErr.Error())
+			}
+		},
+	})
+
+	log.Printf("Web server started listening on post %d", 8080)
+	if err = server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		log.Printf("Could not initialize web server on port %d", 8080)
+	}
+
+	<-gracefulShutdownCtx.Done()
+	log.Println("Graceful shutdown complete")
 }
 
 func GetHttpClient() *http.Client {
