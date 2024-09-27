@@ -50,6 +50,22 @@ func (producer *Producer) Client(client client.Client) error {
 	return nil
 }
 
+func (producer *Producer) Remove(client client.Client) error {
+	message := model.NewMessage(client, model.MessageTypeRemove)
+	payload, err := json.Serialize(message)
+	if err != nil {
+		return err
+	}
+
+	for otherClient := range producer.getAllExcept(client) {
+		if err = otherClient.Send(payload); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (producer *Producer) CurrentClients(client client.Client) error {
 	for otherClient := range producer.getAllExcept(client) {
 		message := model.NewMessage(otherClient, model.MessageTypeClient)

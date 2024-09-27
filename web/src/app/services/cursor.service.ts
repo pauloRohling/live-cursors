@@ -28,6 +28,11 @@ export class CursorService {
           return accumulator;
         }
 
+        if (current.type === MessageType.REMOVE) {
+          accumulator.cursors.delete(current.data.id);
+          return accumulator;
+        }
+
         const cursor = accumulator.cursors.get(current.data.id);
         if (cursor) {
           const position = current.data as Position;

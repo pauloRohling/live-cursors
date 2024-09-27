@@ -49,7 +49,9 @@ func (handler *WebSocketHandler) Handle(w http.ResponseWriter, r *http.Request) 
 			log.Printf("Error during closing connection: %s", err.Error())
 		}
 
-		// TODO Send a message to all clients to remove the client
+		if err = handler.producer.Remove(newClient); err != nil {
+			log.Printf("Error during removing client: %s", err.Error())
+		}
 	}(newClient)
 
 	if err = handler.sendMessages(newClient); err != nil {

@@ -6,4 +6,5 @@ const (
 	MessageTypePosition MessageType = "position"
 	MessageTypeClient   MessageType = "client"
 	MessageTypeSelf     MessageType = "self"
+	MessageTypeRemove   MessageType = "remove"
 )
