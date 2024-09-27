@@ -11,6 +11,13 @@ help:
 install:
 	go mod tidy -e
 
+## container: build docker image
+.PHONY: container
+container:
+	-docker rmi live-cursors
+	docker build -t live-cursors .
+	docker run --rm -p 8080:8080 live-cursors
+
 ## test: run all tests
 .PHONY: test
 test:
