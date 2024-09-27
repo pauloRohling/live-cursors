@@ -17,6 +17,9 @@ import (
 )
 
 type Environment struct {
+	Server struct {
+		Port int `yml:"port" env:"SERVER_PORT"`
+	}
 	Api struct {
 		Url string `yml:"url" env:"API_URL"`
 		Key string `yml:"key" env:"API_KEY"`
@@ -46,7 +49,7 @@ func main() {
 	wsHandler := presentation.NewWebSocketHandler(clientFactory, clientManager, producer)
 
 	http.HandleFunc("/", wsHandler.Handle)
-	server := &http.Server{Addr: fmt.Sprintf(":%d", 8080)}
+	server := &http.Server{Addr: fmt.Sprintf(":%d", env.Server.Port)}
 
 	gracefulShutdownCtx := graceful.Shutdown(&graceful.Params{
 		OnStart:   func() { log.Printf("Graceful shutdown started. Waiting for active requests to complete") },
@@ -58,9 +61,9 @@ func main() {
 		},
 	})
 
-	log.Printf("Web server started listening on post %d", 8080)
+	log.Printf("Web server started listening on post %d", env.Server.Port)
 	if err = server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-		log.Printf("Could not initialize web server on port %d", 8080)
+		log.Printf("Could not initialize web server on port %d", env.Server.Port)
 	}
 
 	<-gracefulShutdownCtx.Done()

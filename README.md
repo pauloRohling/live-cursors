@@ -66,6 +66,7 @@ npm start
 
 | Variable                 | Description                                 | Default Value                            | Required |
 |--------------------------|---------------------------------------------|------------------------------------------|----------|
+| `SERVER_PORT`            | Port to listen on                           | 8080                                     | false    |
 | `API_URL`                | URL of the API                              | https://api.api-ninjas.com/v1/randomuser | false    |
 | `API_KEY`                | API key for the API                         | -                                        | true     |
 | `HTTP_MAX_RETRY`         | Maximum number of retries for HTTP requests | 3                                        | false    |
