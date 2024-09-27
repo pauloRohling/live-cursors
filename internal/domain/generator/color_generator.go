@@ -12,7 +12,7 @@ func NewColorGenerator() *ColorGenerator {
 	return &ColorGenerator{}
 }
 
-func (c *ColorGenerator) Generate() (string, error) {
+func (generator *ColorGenerator) Generate() (string, error) {
 	return fmt.Sprintf(
 		"#%02X%02X%02X",
 		rand.UintN(255),

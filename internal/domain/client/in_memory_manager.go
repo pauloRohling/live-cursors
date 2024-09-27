@@ -1,7 +1,7 @@
 package client
 
 import (
-	"errors"
+	"fmt"
 	"github.com/google/uuid"
 	"sync"
 )
@@ -23,7 +23,7 @@ func (manager *InMemoryManager) Add(client Client) error {
 	defer manager.mutex.Unlock()
 
 	if _, ok := manager.clients[client.GetID()]; ok {
-		return errors.New("client already exists")
+		return fmt.Errorf("client already exists")
 	}
 
 	manager.clients[client.GetID()] = client

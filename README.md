@@ -62,13 +62,19 @@ npm start
 
 9. Open your web browser and navigate to `http://localhost:4200`.
 
-
 ## Environment Variables
 
-| Variable  | Description         | Default Value                            | Required |
-|-----------|---------------------|------------------------------------------|----------|
-| `API_URL` | URL of the API      | https://api.api-ninjas.com/v1/randomuser | false    |
-| `API_KEY` | API key for the API | -                                        | true     |
+| Variable                 | Description                                 | Default Value                            | Required |
+|--------------------------|---------------------------------------------|------------------------------------------|----------|
+| `API_URL`                | URL of the API                              | https://api.api-ninjas.com/v1/randomuser | false    |
+| `API_KEY`                | API key for the API                         | -                                        | true     |
+| `HTTP_MAX_RETRY`         | Maximum number of retries for HTTP requests | 3                                        | false    |
+| `HTTP_MAX_RETRY_TIMEOUT` | Maximum timeout for HTTP requests           | 5s                                       | false    |
+| `HTTP_MIN_RETRY_TIMEOUT` | Minimum timeout for HTTP requests           | 1s                                       | false    |
+
+## Contributing
+
+Contributions are welcome!
 
 ## License
 
