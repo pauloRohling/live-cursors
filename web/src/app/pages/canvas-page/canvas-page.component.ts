@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit } from "@angular/core";
-import { AsyncPipe, JsonPipe } from "@angular/common";
+import { AsyncPipe } from "@angular/common";
 import { CursorComponent } from "../../components/cursor/cursor.component";
 import { fromEvent, map, tap, throttleTime, withLatestFrom } from "rxjs";
 import { CursorService } from "../../services/cursor.service";
@@ -7,11 +7,10 @@ import { WebSocketService } from "../../services/websocket.service";
 
 @Component({
   selector: "app-canvas-page",
-  standalone: true,
-  imports: [AsyncPipe, CursorComponent, JsonPipe],
+  imports: [AsyncPipe, CursorComponent],
   templateUrl: "./canvas-page.component.html",
   styleUrl: "./canvas-page.component.scss",
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CanvasPageComponent implements OnInit {
   private readonly cursorService = inject(CursorService);
@@ -28,7 +27,7 @@ export class CanvasPageComponent implements OnInit {
           return { x: mouseEvent.x, y: mouseEvent.y };
         }),
         withLatestFrom(this.cursorService.active$),
-        tap(([point, user]) => this.websocketService.send({ id: user.id, ...point })),
+        tap(([point, user]) => this.websocketService.send({ id: user.id, ...point }))
       )
       .subscribe();
   }

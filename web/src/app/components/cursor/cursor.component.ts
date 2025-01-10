@@ -4,7 +4,6 @@ import { PointerComponent } from "../pointer/pointer.component";
 
 @Component({
   selector: "app-cursor",
-  standalone: true,
   imports: [PointerComponent],
   templateUrl: "./cursor.component.html",
   styleUrl: "./cursor.component.scss",
