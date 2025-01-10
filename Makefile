@@ -1,4 +1,4 @@
-BINARY_NAME = txplorer
+PACKAGES = ./internal/application/... ./internal/domain/...
 
 ## help: print this help message
 .PHONY: help
@@ -21,13 +21,18 @@ container:
 ## test: run all tests
 .PHONY: test
 test:
-	go test -v -race -failfast -buildvcs ./...
+	go test -race -failfast -buildvcs $(PACKAGES)
 
-## test/cover: run all tests and display coverage
-.PHONY: test/cover
-test/cover:
-	go test -v -race -buildvcs -coverprofile=./tmp/coverage.out ./...
+## test/c: run all tests and display coverage
+.PHONY: test/c
+test/c:
+	go test -v -race -buildvcs -coverprofile=./tmp/coverage.out $(PACKAGES)
 	go tool cover -html=./tmp/coverage.out
+
+## test/v: run all tests in verbose mode
+.PHONY: test/v
+test/v:
+	go test -v -race -failfast -buildvcs $(PACKAGES)
 
 ## run: run the application
 .PHONY: run

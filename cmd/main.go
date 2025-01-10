@@ -5,45 +5,25 @@ import (
 	"errors"
 	"fmt"
 	"github.com/hashicorp/go-retryablehttp"
-	"github.com/ilyakaznacheev/cleanenv"
+	clientApplication "live-cursors/internal/application/client"
+	"live-cursors/internal/application/generator"
+	"live-cursors/internal/application/message"
 	"live-cursors/internal/domain/client"
-	"live-cursors/internal/domain/generator"
-	"live-cursors/internal/domain/message"
+	"live-cursors/internal/environment"
 	"live-cursors/internal/presentation"
 	"live-cursors/pkg/graceful"
 	"log"
 	"net/http"
-	"time"
 )
 
-type Environment struct {
-	Server struct {
-		Port int `yml:"port" env:"SERVER_PORT"`
-	}
-	Api struct {
-		Url string `yml:"url" env:"API_URL"`
-		Key string `yml:"key" env:"API_KEY"`
-	} `yml:"api"`
-	Http struct {
-		MaxRetry        int           `yml:"max_retry" env:"HTTP_MAX_RETRY"`
-		MaxRetryTimeout time.Duration `yml:"max_retry_timeout" env:"HTTP_MAX_RETRY_TIMEOUT"`
-		MinRetryTimeout time.Duration `yml:"min_retry_timeout" env:"HTTP_MIN_RETRY_TIMEOUT"`
-	} `yml:"http"`
-}
-
-var env Environment
+var env = environment.Env()
 
 func main() {
-	err := cleanenv.ReadConfig("env.yml", &env)
-	if err != nil {
-		panic(err)
-	}
-
 	httpClient := GetHttpClient()
 	nameGenerator := generator.NewNameGenerator(httpClient, env.Api.Url, env.Api.Key)
 	colorGenerator := generator.NewColorGenerator()
-	clientManager := client.NewInMemoryManager()
-	clientFactory := client.NewRandomFactory(nameGenerator, colorGenerator)
+	clientManager := clientApplication.NewInMemoryManager()
+	clientFactory := client.NewDefaultFactory(nameGenerator, colorGenerator)
 	producer := message.NewProducer(clientManager)
 
 	wsHandler := presentation.NewWebSocketHandler(clientFactory, clientManager, producer)
@@ -62,7 +42,7 @@ func main() {
 	})
 
 	log.Printf("Web server started listening on post %d", env.Server.Port)
-	if err = server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+	if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		log.Printf("Could not initialize web server on port %d", env.Server.Port)
 	}
 

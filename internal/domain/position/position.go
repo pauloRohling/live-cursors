@@ -1,4 +1,4 @@
-package model
+package position
 
 import "github.com/google/uuid"
 

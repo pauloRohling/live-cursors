@@ -3,22 +3,25 @@ package client
 import (
 	"fmt"
 	"github.com/google/uuid"
+	"live-cursors/internal/domain/client"
+	"maps"
+	"slices"
 	"sync"
 )
 
 type InMemoryManager struct {
-	clients map[uuid.UUID]Client
+	clients map[uuid.UUID]*client.Client
 	mutex   *sync.Mutex
 }
 
 func NewInMemoryManager() *InMemoryManager {
 	return &InMemoryManager{
-		clients: make(map[uuid.UUID]Client),
+		clients: make(map[uuid.UUID]*client.Client),
 		mutex:   &sync.Mutex{},
 	}
 }
 
-func (manager *InMemoryManager) Add(client Client) error {
+func (manager *InMemoryManager) Add(client *client.Client) error {
 	manager.mutex.Lock()
 	defer manager.mutex.Unlock()
 
@@ -34,8 +37,8 @@ func (manager *InMemoryManager) Remove(id uuid.UUID) error {
 	manager.mutex.Lock()
 	defer manager.mutex.Unlock()
 
-	if client, ok := manager.clients[id]; ok {
-		if err := client.Close(); err != nil {
+	if aClient, ok := manager.clients[id]; ok {
+		if err := aClient.Close(); err != nil {
 			return err
 		}
 		delete(manager.clients, id)
@@ -44,39 +47,30 @@ func (manager *InMemoryManager) Remove(id uuid.UUID) error {
 	return nil
 }
 
-func (manager *InMemoryManager) Get(id uuid.UUID) Client {
+func (manager *InMemoryManager) Get(id uuid.UUID) *client.Client {
 	manager.mutex.Lock()
 	defer manager.mutex.Unlock()
 	return manager.clients[id]
 }
 
-func (manager *InMemoryManager) GetAll() []Client {
+func (manager *InMemoryManager) GetAll() []*client.Client {
 	manager.mutex.Lock()
 	defer manager.mutex.Unlock()
-
-	clients := make([]Client, len(manager.clients))
-
-	i := 0
-	for _, client := range manager.clients {
-		clients[i] = client
-		i++
-	}
-
-	return clients
+	return slices.Collect(maps.Values(manager.clients))
 }
 
 func (manager *InMemoryManager) Broadcast(message []byte, ignoreId *uuid.UUID) {
 	manager.mutex.Lock()
 	defer manager.mutex.Unlock()
 
-	for id, client := range manager.clients {
+	for id, aClient := range manager.clients {
 		if ignoreId != nil && *ignoreId == id {
 			continue
 		}
 
 		// If there is an error sending the message, assume the client
 		// has disconnected and remove it from the manager
-		if err := client.Send(message); err != nil {
+		if err := aClient.Send(message); err != nil {
 			delete(manager.clients, id)
 		}
 	}

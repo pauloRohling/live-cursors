@@ -15,7 +15,11 @@ type WebSocketHandler struct {
 }
 
 func NewWebSocketHandler(factory client.Factory, manager client.Manager, producer client.Producer) *WebSocketHandler {
-	upgrader := &websocket.Upgrader{ReadBufferSize: 1024, WriteBufferSize: 1024}
+	upgrader := &websocket.Upgrader{
+		ReadBufferSize:  1024,
+		WriteBufferSize: 1024,
+	}
+
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 
 	return &WebSocketHandler{
@@ -44,7 +48,7 @@ func (handler *WebSocketHandler) Handle(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	defer func(newClient client.Client) {
+	defer func(newClient *client.Client) {
 		if err = handler.manager.Remove(newClient.GetID()); err != nil {
 			log.Printf("Error during closing connection: %s", err.Error())
 		}
@@ -63,7 +67,7 @@ func (handler *WebSocketHandler) Handle(w http.ResponseWriter, r *http.Request) 
 	handler.listenPositions(newClient)
 }
 
-func (handler *WebSocketHandler) sendMessages(newClient client.Client) error {
+func (handler *WebSocketHandler) sendMessages(newClient *client.Client) error {
 	if err := handler.producer.Self(newClient); err != nil {
 		return err
 	}
@@ -75,7 +79,7 @@ func (handler *WebSocketHandler) sendMessages(newClient client.Client) error {
 	return handler.producer.CurrentClients(newClient)
 }
 
-func (handler *WebSocketHandler) listenPositions(newClient client.Client) {
+func (handler *WebSocketHandler) listenPositions(newClient *client.Client) {
 	for {
 		rawPosition, err := newClient.Read()
 		if err != nil {

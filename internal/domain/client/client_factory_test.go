@@ -6,10 +6,22 @@ import (
 	"testing"
 )
 
+type MockGenerator struct {
+	result string
+}
+
+func NewMockGenerator(result string) *MockGenerator {
+	return &MockGenerator{result: result}
+}
+
+func (generator MockGenerator) Generate() (string, error) {
+	return generator.result, nil
+}
+
 func TestRandomFactory_Create(t *testing.T) {
 	nameGenerator := NewMockGenerator("Name")
 	colorGenerator := NewMockGenerator("Color")
-	factory := NewRandomFactory(nameGenerator, colorGenerator)
+	factory := NewDefaultFactory(nameGenerator, colorGenerator)
 
 	conn := &websocket.Conn{}
 	client, err := factory.Create(conn)
