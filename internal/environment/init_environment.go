@@ -1,8 +1,9 @@
 package environment
 
 import (
+	"fmt"
 	"github.com/ilyakaznacheev/cleanenv"
-	"live-cursors/pkg/banner"
+	"os"
 )
 
 var env Config
@@ -12,8 +13,14 @@ func Env() Config {
 }
 
 func init() {
-	banner.Show()
+	showBanner()
 	if err := cleanenv.ReadConfig("env.yml", &env); err != nil {
 		panic(err)
+	}
+}
+
+func showBanner() {
+	if file, err := os.ReadFile("./banner.txt"); err == nil {
+		fmt.Println(string(file))
 	}
 }
