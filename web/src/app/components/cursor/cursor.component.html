@@ -1,9 +1,11 @@
-<div class="-space-y-1.5" [style.color]="color()">
+<div [style.color]="color()" class="-space-y-1.5">
   <app-pointer></app-pointer>
 
   @if (name(); as name) {
     <div class="rounded-full bg-current px-2 py-0.5">
-      <span class="truncate font-medium" [style.color]="isLight() ? '#000' : '#FFF'">{{ name }}</span>
+      <span [style.color]="isLight() ? '#000' : '#FFF'" class="truncate font-medium">
+        {{ name }}
+      </span>
     </div>
   }
 </div>
