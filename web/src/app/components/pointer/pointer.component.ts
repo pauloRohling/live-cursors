@@ -4,7 +4,7 @@ import { ChangeDetectionStrategy, Component } from "@angular/core";
   selector: "app-pointer",
   imports: [],
   templateUrl: "./pointer.component.html",
-  styleUrl: "./pointer.component.scss",
+  styleUrl: "./pointer.component.css",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PointerComponent {}

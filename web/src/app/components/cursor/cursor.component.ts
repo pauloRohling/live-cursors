@@ -6,7 +6,7 @@ import { PointerComponent } from "../pointer/pointer.component";
   selector: "app-cursor",
   imports: [PointerComponent],
   templateUrl: "./cursor.component.html",
-  styleUrl: "./cursor.component.scss",
+  styleUrl: "./cursor.component.css",
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CursorComponent {
